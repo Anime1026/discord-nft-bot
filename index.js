@@ -8,6 +8,7 @@ client.on("ready", function () {
 
 client.on("message", msg => {
     console.log(msg.content);
+    msg.reply("Thank you");
 })
 
 client.login(process.env.CLIENT_TOKEN);
