@@ -1,14 +1,15 @@
 require('dotenv').config();
-const Discord = require("discord.js");
-const client = new Discord.Client();
+const Discord = require("discord.js")
+const client = new Discord.Client()
 
-client.on("ready", function () {
-    console.log("Ready for some good old ping pong!");
-});
-
-client.on("message", msg => {
-    console.log(msg.content);
-    msg.reply("Thank you");
+client.on("ready", () => {
+    console.log(`Logged in as ${client.user.tag}!`)
 })
 
-client.login(process.env.CLIENT_TOKEN);
+client.on("message", msg => {
+    if (msg.content === "pong") {
+        msg.reply("pong");
+    }
+})
+
+client.login(process.env.CLIENT_TOKEN)
