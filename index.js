@@ -213,19 +213,16 @@ const searchCollection_collectionId = (ctx, key) => {
                     const collectionOpenseaUrl = `https://opensea.io/collection/${collectionSlug}`;
                     const collectionEtherscanUrl = `https://etherscan.io/token/${collectionId}`;
 
-                    let captionText = `\n🌄 _${collectionName}_\n_${collectionId}_\n\n⚡️ *Network: ETHEREUM*\n\n💰 *Price*: ${price} eth\n📉 *Floor Change*:\n🗓 *1 Day*: ${floorChange1day}%\n🗓 *7 Day*: ${floorChange7day}%\n🗓 *30 Day*: ${floorChange30day}%\n📈 *Total Volume*: ${totalVolume} eth\n💎 *Unique Holders*: ${uniqueHolder}\n💎 *Listed*: ${listed.toFixed(
+                    let captionText = `\n⚡️ *Network: ETHEREUM*\n\n💰 *Price*: ${price} eth\n📉 *Floor Change*:\n🗓 *1 Day*: ${floorChange1day}%\n🗓 *7 Day*: ${floorChange7day}%\n🗓 *30 Day*: ${floorChange30day}%\n📈 *Total Volume*: ${totalVolume} eth\n💎 *Unique Holders*: ${uniqueHolder}\n💎 *Listed*: ${listed.toFixed(
                         2
-                    )} %\n\nCollection Links:`;
+                    )} %\n\nCollection Links:\n[Opensea](${collectionOpenseaUrl}) | [Etherscan](${collectionEtherscanUrl}) \n\n\n 🌄 _${collectionName}_\n_${collectionId}_\n`;
                     captionText = captionText.replace(/\./g, "\\.");
                     captionText = captionText.replace(/\+/g, "\\+");
                     captionText = captionText.replace(/\-/g, "\\-");
                     captionText = captionText.replace(/\|/g, "\\|");
 
-                    ctx.channel.send(res.url);
-                    ctx.channel.send(captionText);
-                    const Opensea = new EmbedBuilder().setColor(0x0099FF).setTitle('Opensea').setURL(collectionOpenseaUrl).setDescription('Click here for go to Opensea!');
-                    const Ethereum = new EmbedBuilder().setColor(0x0099FF).setTitle('Ethereum').setURL(collectionEtherscanUrl).setDescription('Click here for go to Ethereum!');
-                    ctx.channel.send({ embeds: [Opensea, Ethereum] });
+                    const info = new EmbedBuilder().setColor(0x0099FF).setImage(res.url).setDescription(`${captionText}`);
+                    ctx.channel.send({ embeds: [info] });
                 })
                 .catch((err) => {
                     console.log(err);
@@ -413,20 +410,16 @@ const searchCollection_collectionName = async (ctx, msg) => {
                             const collectionOpenseaUrl = `https://opensea.io/collection/${collectionSlug}`;
                             const collectionEtherscanUrl = `https://etherscan.io/token/${collectionId}`;
 
-                            let captionText = `\n🌄 _${collectionName}_\n_${collectionId}_\n\n⚡️ *Network: ETHEREUM*\n\n💰 *Price*: ${price} eth\n📉 *Floor Change*:\n🗓 *1 Day*: ${floorChange1day}%\n🗓 *7 Day*: ${floorChange7day}%\n🗓 *30 Day*: ${floorChange30day}%\n📈 *Total Volume*: ${totalVolume} eth\n💎 *Unique Holders*: ${uniqueHolder}\n💎 *Listed*: ${listed.toFixed(
+                            let captionText = `\n⚡️ *Network: ETHEREUM*\n\n💰 *Price*: ${price} eth\n📉 *Floor Change*:\n🗓 *1 Day*: ${floorChange1day}%\n🗓 *7 Day*: ${floorChange7day}%\n🗓 *30 Day*: ${floorChange30day}%\n📈 *Total Volume*: ${totalVolume} eth\n💎 *Unique Holders*: ${uniqueHolder}\n💎 *Listed*: ${listed.toFixed(
                                 2
-                            )} %\n\nCollection Links:`;
+                            )} %\n\nCollection Links:\n[Opensea](${collectionOpenseaUrl}) | [Etherscan](${collectionEtherscanUrl})\n\n\n🌄 _${collectionName}_\n_${collectionId}_\n`;
                             captionText = captionText.replace(/\./g, "\\.");
                             captionText = captionText.replace(/\+/g, "\\+");
                             captionText = captionText.replace(/\-/g, "\\-");
                             captionText = captionText.replace(/\|/g, "\\|");
 
-                            ctx.channel.send(res.url);
-                            ctx.channel.send(captionText);
-
-                            const Opensea = new EmbedBuilder().setColor(0x0099FF).setTitle('Opensea').setURL(collectionOpenseaUrl).setDescription('Click here for go to Opensea!');
-                            const Ethereum = new EmbedBuilder().setColor(0x0099FF).setTitle('Ethereum').setURL(collectionEtherscanUrl).setDescription('Click here for go to Ethereum!');
-                            ctx.channel.send({ embeds: [Opensea, Ethereum] });
+                            const Opensea = new EmbedBuilder().setColor(0x0099FF).setImage(res.url).setDescription(`${captionText}`);
+                            ctx.channel.send({ embeds: [Opensea] });
                         })
                         .catch((err) => {
                             console.log(err);
@@ -504,30 +497,29 @@ const searchCollection_solCollectionName = async (ctx, msg) => {
             filestack_client
                 .upload(image_file)
                 .then(async (res) => {
-                    let captionText = `\n🌄 _${res_sol_collection.data[0].name
-                        }_\n\n⚡️ *Network: Solana*\n\n💰 *Price*: ${res_sol_collection.data[0].floor_price.toFixed(
-                            2
-                        )} sol\n📉 *Floor Change*:\n🗓 *1 Day*: ${res_sol_collection.data[0].daily_floor.toFixed(
-                            2
-                        )}%\n🗓 *7 Day*: ${res_sol_collection.data[0].weekly_floor.toFixed(
-                            2
-                        )}%\n🗓 *30 Day*: ${res_sol_collection.data[0].monthly_floor.toFixed(
-                            2
-                        )}%\n📈 *Total Volume*: ${res_sol_collection.data[0].me_total_volume.toFixed(
-                            2
-                        )} sol\n💎 *Total Supply*: ${res_sol_collection.data[0].total_items
+                    let captionText = `\n⚡️ *Network: Solana*\n\n💰 *Price*: ${res_sol_collection.data[0].floor_price.toFixed(
+                        2
+                    )} sol\n📉 *Floor Change*:\n🗓 *1 Day*: ${res_sol_collection.data[0].daily_floor.toFixed(
+                        2
+                    )}%\n🗓 *7 Day*: ${res_sol_collection.data[0].weekly_floor.toFixed(
+                        2
+                    )}%\n🗓 *30 Day*: ${res_sol_collection.data[0].monthly_floor.toFixed(
+                        2
+                    )}%\n📈 *Total Volume*: ${res_sol_collection.data[0].me_total_volume.toFixed(
+                        2
+                    )} sol\n💎 *Total Supply*: ${res_sol_collection.data[0].total_items
                         }\n💎 *Listed*: ${res_sol_collection.data[0].me_listed_count
-                        }\n\nCollection Links:`;
+                        }\n\nCollection Links:\n[MagicEden](https://magiceden.io/marketplace/${res_sol_collection.data[0].magiceden
+                        })\n\n\n🌄 _${res_sol_collection.data[0].name
+                        }_\n`;
                     captionText = captionText.replace(/\./g, "\\.");
                     captionText = captionText.replace(/\+/g, "\\+");
                     captionText = captionText.replace(/\-/g, "\\-");
                     captionText = captionText.replace(/\|/g, "\\|");
 
-                    ctx.channel.send(res.url);
-                    ctx.channel.send(captionText);
-                    const collectionSolUrl = `https://magiceden.io/marketplace/${res_sol_collection.data[0].magiceden}`;
-                    const Sol = new EmbedBuilder().setColor(0x0099FF).setTitle("MagicEden").setURL(collectionSolUrl).setDescription('Click here for go to Magiceden!');
-                    ctx.channel.send({ embeds: [Sol] });
+                    const Info = new EmbedBuilder().setColor(0x0099FF).setImage(res.url).setDescription(`${captionText}`);
+                    ctx.channel.send({ embeds: [Info] });
+
                 })
                 .catch((err) => {
                     console.log(err);
