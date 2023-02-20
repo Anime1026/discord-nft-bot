@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits, Partials, EmbedBuilder } = require("discord.js");
+const { Client, GatewayIntentBits, Partials } = require("discord.js");
 const fs = require("fs");
 const { ChartJSNodeCanvas } = require("chartjs-node-canvas");
 const filestack = require("filestack-js");
@@ -17,9 +17,6 @@ const chartJSNodeCanvas = new ChartJSNodeCanvas({
 const prefix = "/";
 const filestack_client = filestack.init("AJhmFi6TvTFel1yYFFcY0z");
 
-
-let Myctx;
-
 const client = new Client({
     'intents': [
         GatewayIntentBits.DirectMessages,
@@ -30,6 +27,9 @@ const client = new Client({
     ],
     'partials': [Partials.Channel],
 });
+
+let Myctx;
+
 
 const InputCallBack = (ctx) => {
     let cmdData = ctx.content.split(" ");
@@ -48,7 +48,6 @@ const InputCallBack = (ctx) => {
                 key = key + cmdData[index].toLowerCase() + "-";
             }
         }
-        console.log(key);
         searchCollection_solCollectionName(ctx, key);
     }
 };
@@ -68,8 +67,10 @@ const searchCollection_collectionId = (ctx, key) => {
     axios
         .request(options2)
         .then(async (res2) => {
-            let url = `https://api.reservoir.tools/events/collections/floor-ask/v1?collection=${id}&sortDirection=desc&limit7`;
+            let url = `https://api.reservoir.tools/events/collections/floor-ask/v1?collection=${id}&sortDirection=desc&limit=1000`;
+
             let data = await axios.get(url);
+
             let configuration = {
                 type: "line",
                 data: {
@@ -87,31 +88,38 @@ const searchCollection_collectionId = (ctx, key) => {
                 },
             };
 
-            const curDate = new Date().valueOf();
-
-            configuration.data.datasets[0].data = [];
+            let PriceData = data.data.events;
+            configuration.data.datasets[0].data.push(PriceData[0].floorAsk.price);
             configuration.data.labels = [];
+            let curDate = new Date().getDate();
 
-            for (let index = 0; index < data.data.events.length; index++) {
-                const element = data.data.events[data.data.events.length - 1 - index];
+            PriceData.forEach((element) => {
+                if (configuration.data.datasets[0].data.length < 7) {
+                    if (new Date(element.event.createdAt).getDate() < curDate) {
+                        let diff = curDate - new Date(element.event.createdAt).getDate();
+                        for (let index = 0; index < diff; index++) {
+                            configuration.data.datasets[0].data.push(element.floorAsk.price);
+                        }
+                        curDate = new Date(element.event.createdAt).getDate();
+                    }
+                }
+            });
 
+            configuration.data.datasets[0].data.reverse();
+
+            // -------------------------------------
+
+            curDate = new Date().valueOf();
+
+            for (let index = 0; index < 7; index++) {
                 const DateNum =
-                    String(
-                        new Date(
-                            curDate -
-                            24 * 60 * 60 * 1000 * (data.data.events.length - 1 - index)
-                        )
-                    ).split(" ")[1] +
+                    String(new Date(curDate - 24 * 60 * 60 * 1000 * (6 - index))).split(
+                        " "
+                    )[1] +
                     "-" +
-                    new Date(
-                        curDate -
-                        24 * 60 * 60 * 1000 * (data.data.events.length - 1 - index)
-                    ).getDate();
+                    new Date(curDate - 24 * 60 * 60 * 1000 * (6 - index)).getDate();
 
                 configuration.data.labels.push(DateNum);
-                configuration.data.datasets[0].data.push(
-                    Number(element.floorAsk.price)
-                );
             }
 
             const dataUrl = await chartJSNodeCanvas.renderToDataURL(configuration);
@@ -239,7 +247,7 @@ const searchCollection_collectionName = async (ctx, msg) => {
             axios
                 .request(options2)
                 .then(async (res2) => {
-                    let url = `https://api.reservoir.tools/events/collections/floor-ask/v1?collection=${response.data.collections[0].collectionId}&sortDirection=desc&limit=7`;
+                    let url = `https://api.reservoir.tools/events/collections/floor-ask/v1?collection=${response.data.collections[0].collectionId}&sortDirection=desc&limit=1000`;
 
                     let data = await axios.get(url);
 
@@ -260,31 +268,41 @@ const searchCollection_collectionName = async (ctx, msg) => {
                         },
                     };
 
-                    const curDate = new Date().valueOf();
-
-                    configuration.data.datasets[0].data = [];
+                    let PriceData = data.data.events;
+                    configuration.data.datasets[0].data.push(PriceData[0].floorAsk.price);
                     configuration.data.labels = [];
+                    let curDate = new Date().getDate();
 
-                    for (let index = 0; index < data.data.events.length; index++) {
-                        const element =
-                            data.data.events[data.data.events.length - 1 - index];
+                    PriceData.forEach((element) => {
+                        if (configuration.data.datasets[0].data.length < 7) {
+                            if (new Date(element.event.createdAt).getDate() < curDate) {
+                                let diff =
+                                    curDate - new Date(element.event.createdAt).getDate();
+                                for (let index = 0; index < diff; index++) {
+                                    configuration.data.datasets[0].data.push(
+                                        element.floorAsk.price
+                                    );
+                                }
+                                curDate = new Date(element.event.createdAt).getDate();
+                            }
+                        }
+                    });
+
+                    configuration.data.datasets[0].data.reverse();
+
+                    // -------------------------------------
+
+                    curDate = new Date().valueOf();
+
+                    for (let index = 0; index < 7; index++) {
                         const DateNum =
                             String(
-                                new Date(
-                                    curDate -
-                                    24 * 60 * 60 * 1000 * (data.data.events.length - 1 - index)
-                                )
+                                new Date(curDate - 24 * 60 * 60 * 1000 * (6 - index))
                             ).split(" ")[1] +
                             "-" +
-                            new Date(
-                                curDate -
-                                24 * 60 * 60 * 1000 * (data.data.events.length - 1 - index)
-                            ).getDate();
+                            new Date(curDate - 24 * 60 * 60 * 1000 * (6 - index)).getDate();
 
                         configuration.data.labels.push(DateNum);
-                        configuration.data.datasets[0].data.push(
-                            Number(element.floorAsk.price)
-                        );
                     }
 
                     const dataUrl = await chartJSNodeCanvas.renderToDataURL(
@@ -374,7 +392,7 @@ const searchCollection_collectionName = async (ctx, msg) => {
 
                             let captionText = `\n🌄 _${collectionName}_\n_${collectionId}_\n\n⚡️ *Network: ETHEREUM*\n\n💰 *Price*: ${price} eth\n📉 *Floor Change*:\n🗓 *1 Day*: ${floorChange1day}%\n🗓 *7 Day*: ${floorChange7day}%\n🗓 *30 Day*: ${floorChange30day}%\n📈 *Total Volume*: ${totalVolume} eth\n💎 *Unique Holders*: ${uniqueHolder}\n💎 *Listed*: ${listed.toFixed(
                                 2
-                            )}%\n\nCollection Links: \nOpensea👉👉(${collectionOpenseaUrl}) | Etherscan👉👉(${collectionEtherscanUrl})`;
+                            )} %\n\nCollection Links:\n[Opensea](${collectionOpenseaUrl}) | [Etherscan](${collectionEtherscanUrl})`;
                             captionText = captionText.replace(/\./g, "\\.");
                             captionText = captionText.replace(/\+/g, "\\+");
                             captionText = captionText.replace(/\-/g, "\\-");
@@ -382,7 +400,6 @@ const searchCollection_collectionName = async (ctx, msg) => {
 
                             ctx.channel.send(res.url);
                             ctx.channel.send(captionText);
-
                         })
                         .catch((err) => {
                             console.log(err);

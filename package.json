@@ -16,6 +16,7 @@
     "dotenv": "^16.0.3",
     "filestack-js": "^3.25.0",
     "fs": "^0.0.1-security",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.20",
+    "openai": "^3.1.0"
   }
 }
