@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Client, GatewayIntentBits, Partials } = require("discord.js");
+const { Client, GatewayIntentBits, Partials, EmbedBuilder } = require("discord.js");
 const fs = require("fs");
 const { ChartJSNodeCanvas } = require("chartjs-node-canvas");
 const filestack = require("filestack-js");
@@ -141,28 +141,38 @@ const searchCollection_collectionId = (ctx, key) => {
                     const price =
                         res2.data.collections[0].floorAsk.price.amount.native.toFixed(4);
                     const floorChange1day =
-                        res2.data.collections[0].floorSaleChange["1day"] >= 1
+                        configuration.data.datasets[0].data[6] >=
+                            configuration.data.datasets[0].data[5]
                             ? "+" +
                             (
-                                (res2.data.collections[0].floorSaleChange["1day"] - 1) *
+                                (configuration.data.datasets[0].data[6] /
+                                    configuration.data.datasets[0].data[5]) *
+                                100 -
                                 100
                             ).toFixed(2)
                             : "-" +
                             (
-                                (1 - res2.data.collections[0].floorSaleChange["1day"]) *
+                                100 -
+                                (configuration.data.datasets[0].data[6] /
+                                    configuration.data.datasets[0].data[5]) *
                                 100
                             ).toFixed(2);
 
                     const floorChange7day =
-                        res2.data.collections[0].floorSaleChange["7day"] >= 1
+                        configuration.data.datasets[0].data[6] >=
+                            configuration.data.datasets[0].data[0]
                             ? "+" +
                             (
-                                (res2.data.collections[0].floorSaleChange["7day"] - 1) *
+                                (configuration.data.datasets[0].data[6] /
+                                    configuration.data.datasets[0].data[0] -
+                                    1) *
                                 100
                             ).toFixed(2)
                             : "-" +
                             (
-                                (1 - res2.data.collections[0].floorSaleChange["7day"]) *
+                                100 -
+                                (configuration.data.datasets[0].data[6] /
+                                    configuration.data.datasets[0].data[0]) *
                                 100
                             ).toFixed(2);
 
@@ -205,7 +215,7 @@ const searchCollection_collectionId = (ctx, key) => {
 
                     let captionText = `\n🌄 _${collectionName}_\n_${collectionId}_\n\n⚡️ *Network: ETHEREUM*\n\n💰 *Price*: ${price} eth\n📉 *Floor Change*:\n🗓 *1 Day*: ${floorChange1day}%\n🗓 *7 Day*: ${floorChange7day}%\n🗓 *30 Day*: ${floorChange30day}%\n📈 *Total Volume*: ${totalVolume} eth\n💎 *Unique Holders*: ${uniqueHolder}\n💎 *Listed*: ${listed.toFixed(
                         2
-                    )} %\n\nCollection Links:\n[Opensea](${collectionOpenseaUrl}) | [Etherscan](${collectionEtherscanUrl})`;
+                    )} %\n\nCollection Links:`;
                     captionText = captionText.replace(/\./g, "\\.");
                     captionText = captionText.replace(/\+/g, "\\+");
                     captionText = captionText.replace(/\-/g, "\\-");
@@ -213,6 +223,9 @@ const searchCollection_collectionId = (ctx, key) => {
 
                     ctx.channel.send(res.url);
                     ctx.channel.send(captionText);
+                    const Opensea = new EmbedBuilder().setColor(0x0099FF).setTitle('Opensea').setURL(collectionOpenseaUrl).setDescription('Click here for go to Opensea!');
+                    const Ethereum = new EmbedBuilder().setColor(0x0099FF).setTitle('Ethereum').setURL(collectionEtherscanUrl).setDescription('Click here for go to Ethereum!');
+                    ctx.channel.send({ embeds: [Opensea, Ethereum] });
                 })
                 .catch((err) => {
                     console.log(err);
@@ -328,28 +341,38 @@ const searchCollection_collectionName = async (ctx, msg) => {
                                     4
                                 );
                             const floorChange1day =
-                                res2.data.collections[0].floorSaleChange["1day"] >= 1
+                                configuration.data.datasets[0].data[6] >=
+                                    configuration.data.datasets[0].data[5]
                                     ? "+" +
                                     (
-                                        (res2.data.collections[0].floorSaleChange["1day"] - 1) *
+                                        (configuration.data.datasets[0].data[6] /
+                                            configuration.data.datasets[0].data[5]) *
+                                        100 -
                                         100
                                     ).toFixed(2)
                                     : "-" +
                                     (
-                                        (1 - res2.data.collections[0].floorSaleChange["1day"]) *
+                                        100 -
+                                        (configuration.data.datasets[0].data[6] /
+                                            configuration.data.datasets[0].data[5]) *
                                         100
                                     ).toFixed(2);
 
                             const floorChange7day =
-                                res2.data.collections[0].floorSaleChange["7day"] >= 1
+                                configuration.data.datasets[0].data[6] >=
+                                    configuration.data.datasets[0].data[0]
                                     ? "+" +
                                     (
-                                        (res2.data.collections[0].floorSaleChange["7day"] - 1) *
+                                        (configuration.data.datasets[0].data[6] /
+                                            configuration.data.datasets[0].data[0] -
+                                            1) *
                                         100
                                     ).toFixed(2)
                                     : "-" +
                                     (
-                                        (1 - res2.data.collections[0].floorSaleChange["7day"]) *
+                                        100 -
+                                        (configuration.data.datasets[0].data[6] /
+                                            configuration.data.datasets[0].data[0]) *
                                         100
                                     ).toFixed(2);
 
@@ -392,7 +415,7 @@ const searchCollection_collectionName = async (ctx, msg) => {
 
                             let captionText = `\n🌄 _${collectionName}_\n_${collectionId}_\n\n⚡️ *Network: ETHEREUM*\n\n💰 *Price*: ${price} eth\n📉 *Floor Change*:\n🗓 *1 Day*: ${floorChange1day}%\n🗓 *7 Day*: ${floorChange7day}%\n🗓 *30 Day*: ${floorChange30day}%\n📈 *Total Volume*: ${totalVolume} eth\n💎 *Unique Holders*: ${uniqueHolder}\n💎 *Listed*: ${listed.toFixed(
                                 2
-                            )} %\n\nCollection Links:\n[Opensea](${collectionOpenseaUrl}) | [Etherscan](${collectionEtherscanUrl})`;
+                            )} %\n\nCollection Links:`;
                             captionText = captionText.replace(/\./g, "\\.");
                             captionText = captionText.replace(/\+/g, "\\+");
                             captionText = captionText.replace(/\-/g, "\\-");
@@ -400,6 +423,10 @@ const searchCollection_collectionName = async (ctx, msg) => {
 
                             ctx.channel.send(res.url);
                             ctx.channel.send(captionText);
+
+                            const Opensea = new EmbedBuilder().setColor(0x0099FF).setTitle('Opensea').setURL(collectionOpenseaUrl).setDescription('Click here for go to Opensea!');
+                            const Ethereum = new EmbedBuilder().setColor(0x0099FF).setTitle('Ethereum').setURL(collectionEtherscanUrl).setDescription('Click here for go to Ethereum!');
+                            ctx.channel.send({ embeds: [Opensea, Ethereum] });
                         })
                         .catch((err) => {
                             console.log(err);
@@ -490,8 +517,7 @@ const searchCollection_solCollectionName = async (ctx, msg) => {
                             2
                         )} sol\n💎 *Total Supply*: ${res_sol_collection.data[0].total_items
                         }\n💎 *Listed*: ${res_sol_collection.data[0].me_listed_count
-                        }\n\nCollection Links:\n[MagicEden](https://magiceden.io/marketplace/${res_sol_collection.data[0].magiceden
-                        })`;
+                        }\n\nCollection Links:`;
                     captionText = captionText.replace(/\./g, "\\.");
                     captionText = captionText.replace(/\+/g, "\\+");
                     captionText = captionText.replace(/\-/g, "\\-");
@@ -499,6 +525,9 @@ const searchCollection_solCollectionName = async (ctx, msg) => {
 
                     ctx.channel.send(res.url);
                     ctx.channel.send(captionText);
+                    const collectionSolUrl = `https://magiceden.io/marketplace/${res_sol_collection.data[0].magiceden}`;
+                    const Sol = new EmbedBuilder().setColor(0x0099FF).setTitle("MagicEden").setURL(collectionSolUrl).setDescription('Click here for go to Magiceden!');
+                    ctx.channel.send({ embeds: [Sol] });
                 })
                 .catch((err) => {
                     console.log(err);
