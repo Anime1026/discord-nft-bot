@@ -259,7 +259,7 @@ const searchCollection_collectionId = async (ctx, key) => {
             })
             .catch((err) => {
                 console.error(err);
-                Myctx.reply("Can`t find this collection");
+                ctx.reply("Can`t find this collection");
             });
     } catch (error) {
         console.log(error);
@@ -498,7 +498,7 @@ const searchCollection_collectionName = async (ctx, msg) => {
             })
             .catch((err) => {
                 console.error(err);
-                Myctx.reply("Can`t find this collection");
+                ctx.reply("Can`t find this collection");
             });
     } catch (error) {
         console.log(error);
@@ -596,7 +596,7 @@ const searchCollection_solCollectionName = async (ctx, msg) => {
             })
             .catch((err) => {
                 console.error(err);
-                Myctx.reply("Can`t find this collection");
+                ctx.reply("Can`t find this collection");
             });
     } catch (error) {
         console.log(error);
