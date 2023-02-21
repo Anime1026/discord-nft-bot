@@ -56,11 +56,7 @@ const searchCollection_collectionId = async (ctx, key) => {
     try {
         const id = key;
 
-        let data = await axios.get(
-            `https://www.reservoir.market/api/reservoir/stats/v2?collection=${id}&normalizeRoyalties=true`
-        );
-
-        let cur_floorPrice = data.data.stats.market.floorAsk.price.amount.native;
+        let cur_floorPrice = 0;
 
         const options2 = {
             method: "GET",
@@ -74,6 +70,29 @@ const searchCollection_collectionId = async (ctx, key) => {
         axios
             .request(options2)
             .then(async (res2) => {
+                const openseaOption = {
+                    method: "GET",
+                    headers: {
+                        accept: "application/json",
+                        "X-API-KEY": "abb98582ec0343268a2fd47cfdf46036",
+                    },
+                    url: `https://api.opensea.io/api/v1/collection/${res2.data.collections[0].slug}/stats`,
+                };
+
+                axios
+                    .request(openseaOption)
+                    .then(async (opensea) => {
+                        cur_floorPrice = opensea.data.stats.floor_price;
+                        console.log(
+                            opensea.data.stats.floor_price,
+                            "opensea",
+                            cur_floorPrice
+                        );
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                    });
+
                 let url = `https://api.reservoir.tools/events/collections/floor-ask/v1?collection=${id}&sortDirection=desc&limit=1000`;
 
                 let data = await axios.get(url);
@@ -272,16 +291,33 @@ const searchCollection_collectionName = async (ctx, msg) => {
                     },
                 };
 
-                let data = await axios.get(
-                    `https://www.reservoir.market/api/reservoir/stats/v2?collection=${response.data.collections[0].collectionId}&normalizeRoyalties=true`
-                );
-
-                let cur_floorPrice =
-                    data.data.stats.market.floorAsk.price.amount.native;
+                let cur_floorPrice = 0;
 
                 axios
                     .request(options2)
                     .then(async (res2) => {
+                        const openseaOption = {
+                            method: "GET",
+                            headers: {
+                                accept: "application/json",
+                                "X-API-KEY": "abb98582ec0343268a2fd47cfdf46036",
+                            },
+                            url: `https://api.opensea.io/api/v1/collection/${res2.data.collections[0].slug}/stats`,
+                        };
+
+                        axios
+                            .request(openseaOption)
+                            .then(async (opensea) => {
+                                cur_floorPrice = opensea.data.stats.floor_price;
+                                console.log(
+                                    opensea.data.stats.floor_price,
+                                    "opensea",
+                                    cur_floorPrice
+                                );
+                            })
+                            .catch((err) => {
+                                console.error(err);
+                            });
                         let url = `https://api.reservoir.tools/events/collections/floor-ask/v1?collection=${response.data.collections[0].collectionId}&sortDirection=desc&limit=1000`;
 
                         let data = await axios.get(url);
