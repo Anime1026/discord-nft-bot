@@ -493,12 +493,12 @@ const searchCollection_collectionName = async (ctx, msg) => {
                     })
                     .catch((err) => {
                         console.error(err);
-                        Myctx.reply("Can`t find this collection");
+                        ctx.reply("Can`t find this collection");
                     });
             })
             .catch((err) => {
                 console.error(err);
-                ctx.reply("Can`t find this collection");
+                Myctx.reply("Can`t find this collection");
             });
     } catch (error) {
         console.log(error);
@@ -512,8 +512,8 @@ const searchCollection_solCollectionName = async (ctx, msg) => {
             .then(async (res_sol_collection) => {
                 let url = `https://cloudflare-worker-nft.solswatch.workers.dev/chart-data/30/${msg}`;
 
-                let data = await axios.get(url);
-                data = data.data[0];
+                let ChartData = await axios.get(url);
+                let data = ChartData.data[0];
 
                 let configuration = {
                     type: "line",
@@ -570,11 +570,22 @@ const searchCollection_solCollectionName = async (ctx, msg) => {
                         let captionText = `\n🌄 _${res_sol_collection.data[0].name
                             }_\n\n⚡️ *Network: Solana*\n\n💰 *Price*: ${res_sol_collection.data[0].floor_price.toFixed(
                                 2
-                            )} sol\n📉 *Floor Change*:\n🗓 *1 Day*: ${res_sol_collection.data[0].daily_floor.toFixed(
-                                2
-                            )}%\n🗓 *7 Day*: ${res_sol_collection.data[0].weekly_floor.toFixed(
-                                2
-                            )}%\n🗓 *30 Day*: ${res_sol_collection.data[0].monthly_floor.toFixed(
+                            )} sol\n📉 *Floor Change*:\n🗓 *1 Day*: ${(
+                                (ChartData.data[1][29].me_floor_price /
+                                    ChartData.data[1][28].me_floor_price -
+                                    1) *
+                                100
+                            ).toFixed(2)}%\n🗓 *7 Day*: ${(
+                                (ChartData.data[1][29].me_floor_price /
+                                    ChartData.data[1][23].me_floor_price -
+                                    1) *
+                                100
+                            ).toFixed(2)}%\n🗓 *30 Day*: ${(
+                                (ChartData.data[1][29].me_floor_price /
+                                    ChartData.data[1][0].me_floor_price -
+                                    1) *
+                                100
+                            ).toFixed(
                                 2
                             )}%\n📈 *Total Volume*: ${res_sol_collection.data[0].me_total_volume.toFixed(
                                 2
